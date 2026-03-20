@@ -11,13 +11,20 @@ export const authOptions: AuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        if (!credentials) return null;
-        const user = await UserLogin(credentials.email, credentials.password);
-        if (user) {
-          return user;
-        } else {
-          return null;
+        if (!credentials?.email || !credentials?.password) return null;
+
+        const res = await UserLogin(credentials.email, credentials.password);
+
+        if (res?.success) {
+          return {
+            _id: res._id,
+            name: res.name,
+            email: res.email,
+            role: res.role,
+            token: res.token,
+          } as any;
         }
+        return null;
       },
     }),
   ],
